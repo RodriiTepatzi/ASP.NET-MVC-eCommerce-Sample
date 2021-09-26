@@ -1,4 +1,6 @@
 ﻿using eCommerceTest.Data;
+using eCommerceTest.Data.Services;
+using eCommerceTest.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System;
@@ -10,17 +12,42 @@ namespace eCommerceTest.Controllers
 {
     public class MoviesController : Controller
     {
-        private readonly AppDbContext _context;
+        private readonly IMoviesService _service;
 
-        public MoviesController(AppDbContext context)
+        public MoviesController(IMoviesService service)
         {
-            _context = context;
+            _service = service;
         }
 
-        public async Task<IActionResult> Index()
+        public async Task<ActionResult> Index()
         {
-            var data = await _context.Movies.Include(n => n.Cinema).OrderBy(n => n.StartDate).ToListAsync();
+            var data = await _service.GetAllAsync(n => n.Cinema);
             return View(data);
+        }
+
+        public IActionResult Create()
+        {
+            return View();
+        }
+
+        public async Task<IActionResult> Create(int id, [Bind("Id, Name, Description, Price, Image, StartDate, EndDate, MovieCategory")] Movie movie)
+        {
+            if (!ModelState.IsValid)
+            {
+                return View(movie);
+            }
+
+            await _service.AddAsync(movie);
+
+            return RedirectToAction(nameof(Index));
+        }
+
+        public async Task<IActionResult> Details(int id)
+        {
+            var movieDetails = await _service.GetMovieByIdAsync(id);
+            if (movieDetails == null) return View("NotFound");
+
+            return View(movieDetails);
         }
     }
 }

@@ -29,6 +29,19 @@ namespace eCommerceTest.Controllers
             return View();
         }
 
+        [HttpPost]
+        public async Task<IActionResult> Create(int id, [Bind("Id, FullName, ProfilePictureURL, Bio")] Actor actor)
+        {
+            if (!ModelState.IsValid)
+            {
+                return View(actor);
+            }
+
+            await _service.AddAsync(actor);
+
+            return RedirectToAction(nameof(Index));
+        }
+
         //Get: Actors / Edit
 
         public async Task<IActionResult> Edit(int id)
@@ -78,20 +91,6 @@ namespace eCommerceTest.Controllers
 
             return RedirectToAction(nameof(Index));
         }
-
-        [HttpPost]
-        public async Task<IActionResult> Create(int id, [Bind("Id, FullName, ProfilePictureURL, Bio")] Actor actor)
-        {
-            if (!ModelState.IsValid)
-            {
-                return View(actor);
-            }
-
-            await _service.AddAsync(actor);
-
-            return RedirectToAction(nameof(Index));
-        }
-
 
         public async Task<IActionResult> Details(int id)
         {

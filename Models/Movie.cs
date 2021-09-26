@@ -1,4 +1,5 @@
 ﻿using eCommerceTest.Data;
+using eCommerceTest.Data.Base;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
@@ -8,23 +9,37 @@ using System.Threading.Tasks;
 
 namespace eCommerceTest.Models
 {
-    public class Movie
+    public class Movie : IEntityBase
     {
         [Key]
         public int Id { get; set; }
+
         [Display(Name = "Movie Name")]
+        [Required(ErrorMessage = "Movie name is required")]
         public string Name { get; set; }
+
         [Display(Name = "Movie Description")]
+        [Required(ErrorMessage = "Movie description is required")]
         public string Description { get; set; }
+
         [Display(Name = "Price")]
+        [Required(ErrorMessage = "Movie price is required")]
         public double Price { get; set; }
+
         [Display(Name = "Image")]
+        [Required(ErrorMessage = "Movie image is required")]
         public string Image { get; set; }
+
         [Display(Name = "Start Date")]
+        [Required(ErrorMessage = "Start date is required")]
         public DateTime StartDate { get; set; }
+
         [Display(Name = "End Date")]
+        [Required(ErrorMessage = "End date is required")]
         public DateTime EndDate { get; set; }
+
         [Display(Name = "Category")]
+        [Required(ErrorMessage = "Category is required")]
         public MovieCategory MovieCategory { get; set; }
 
         //Relationship
