@@ -2,6 +2,7 @@
 using eCommerceTest.Data.Services;
 using eCommerceTest.Models;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
@@ -25,19 +26,32 @@ namespace eCommerceTest.Controllers
             return View(data);
         }
 
-        public IActionResult Create()
+        public async Task<IActionResult> Create()
         {
+            var moviewDropdownData = await _service.GetNewMoviewDropdownsValue();
+
+            ViewBag.CinemaId = new SelectList(moviewDropdownData.Cinemas, "Id", "Name");
+            ViewBag.ActorId = new SelectList(moviewDropdownData.Actors, "Id", "FullName");
+            ViewBag.ProducerId = new SelectList(moviewDropdownData.Producers, "Id", "FullName");
+
             return View();
         }
 
-        public async Task<IActionResult> Create(int id, [Bind("Id, Name, Description, Price, Image, StartDate, EndDate, MovieCategory")] Movie movie)
+        [HttpPost]
+        public async Task<IActionResult> Create(NewMovieVM movie)
         {
             if (!ModelState.IsValid)
             {
-                return View(movie);
+                var moviewDropdownData = await _service.GetNewMoviewDropdownsValue();
+
+                ViewBag.CinemaId = new SelectList(moviewDropdownData.Cinemas, "Id", "Name");
+                ViewBag.ActorId = new SelectList(moviewDropdownData.Actors, "Id", "FullName");
+                ViewBag.ProducerId = new SelectList(moviewDropdownData.Producers, "Id", "FullName");
+
+                return View();
             }
 
-            await _service.AddAsync(movie);
+            await _service.AddNewMovieAsync(movie);
 
             return RedirectToAction(nameof(Index));
         }
