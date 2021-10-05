@@ -13,5 +13,6 @@ namespace eCommerceTest.Data.Services
         Task<Movie> GetMovieByIdAsync(int id);
         Task<NewMovieDropdownsVM> GetNewMoviewDropdownsValue();
         Task AddNewMovieAsync(NewMovieVM data);
+        Task UpdateMovieAsync(NewMovieVM data);
     }
 }

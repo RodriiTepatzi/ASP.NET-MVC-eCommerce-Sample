@@ -15,13 +15,13 @@
                             <p class="card-text">
                                 <h5 class="card-title">
                                     @item.Name
-                                    <a class="text-white float-right"><i class="bi bi-pencil-square"></i></a>
+                                    <a class="text-white float-right" asp-action="Edit" asp-route-id="@item.Id"><i class="bi bi-pencil-square"></i></a>
                                 </h5>
                             </p>
                         </div>
                     </div>
                     <div class="col-md-6">
-                        <img src="@item.Image" width="100%" alt="@item.Name">
+                        <img src="@item.Image" style="width:100%" alt="@item.Name">
                     </div>
                     <div class="col-md-6">
                         <div class="card-body">

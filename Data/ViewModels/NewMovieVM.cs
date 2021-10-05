@@ -11,6 +11,8 @@ namespace eCommerceTest.Models
 {
     public class NewMovieVM
     {
+        public int Id { get; set; }
+
         [Display(Name = "Movie Name")]
         [Required(ErrorMessage = "Movie name is required")]
         public string Name { get; set; }
