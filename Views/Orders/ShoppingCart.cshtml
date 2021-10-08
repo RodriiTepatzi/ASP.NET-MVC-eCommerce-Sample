@@ -29,9 +29,8 @@
                     <td class="align-middle">@item.Movie.Price.ToString("c")</td>
                     <td class="align-middle">@((item.Amount*item.Movie.Price).ToString())</td>
                     <td class="align-middle">
-                        <a class="text-center" asp-controller="Orders" asp-action="RemoveItemFromShoppingCart" asp-route-id="@item.Movie.Id"><i class="bi bi-cart-dash"></i></a>
-                        |
-                        <a class="text-center" asp-controller="Orders" asp-action="AddItemToShoppingCart" asp-route-id="@item.Movie.Id"><i class="bi bi-cart-plus"></i></a>
+                        <a class="text-danger" asp-controller="Orders" asp-action="RemoveItemFromShoppingCart" asp-route-id="@item.Movie.Id"><i class="bi bi-cart-dash"></i></a>
+                        <a class="text-success" asp-controller="Orders" asp-action="AddItemToShoppingCart" asp-route-id="@item.Movie.Id"><i class="bi bi-cart-plus"></i></a>
                     </td>
                 </tr>
                 }
@@ -50,10 +49,58 @@
 
         <div class="text-center">
             <div class="btn-group">
-                <a class="btn btn-outline-success" asp-controller="Movies" asp-action="Index">
+                <div id="paypal-btn"></div>
+                <span style="padding: 5px;"></span>
+                <a class="btn btn-outline-primary" asp-controller="Movies" asp-action="Index">
                     Add More Items
                 </a>
             </div>
         </div>
     </div>
 </div>
+
+@section Scripts{
+    <script src="https://www.paypal.com/sdk/js?client-id=AaeQxAWDQcspkGJ2u7scad4NuqN4MsqhCzxaniDj8DPoSgzklfghJT1b2-e1tFF-NlIjFWz-bMUJ8Ran"></script>
+    <script src="https://www.paypalobjects.com/api/checkout.js"></script>
+    
+
+    <script>
+        let _total = @Html.Raw(Model.ShoppingCartTotal)
+
+        paypal.Button.render({
+            //Env config
+            env: 'sandbox',
+            client: {
+                sandbox:'AaeQxAWDQcspkGJ2u7scad4NuqN4MsqhCzxaniDj8DPoSgzklfghJT1b2-e1tFF-NlIjFWz-bMUJ8Ran'
+            },
+
+            //CustomizeButton
+            locale: 'en_US',
+            style: {
+                
+               size: 'medium',
+                color: 'black',
+                shape: 'rect',
+                label: 'pay',
+                tagline: false
+            },
+
+            payment: function (data, actions) {
+                return actions.payment.create({
+                    transactions: [{
+                        amount: {
+                            total: _total,
+                            currency: 'USD'
+                        }
+                    }]
+                });
+            },
+            onAuthorize: function (data, actions) {
+                return actions.payment.execute().then(function () {
+                    var url = '@Url.Action("CompleteOrder", "Orders", new { })';
+                    window.location.href = url;
+                });
+            }
+        }, "paypal-btn");
+    </script>
+}

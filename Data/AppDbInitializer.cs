@@ -1,5 +1,7 @@
-﻿using eCommerceTest.Models;
+﻿using eCommerceTest.Data.Static;
+using eCommerceTest.Models;
 using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.DependencyInjection;
 using System;
 using System.Collections.Generic;
@@ -279,6 +281,57 @@ namespace eCommerceTest.Data
                     });
                     context.SaveChanges();
                 }
+            }
+        }
+
+        public static async Task SeedUsersAndRolesAsync(IApplicationBuilder applicationBuilder)
+        {
+            using (var serviceScope = applicationBuilder.ApplicationServices.CreateScope())
+            {
+                var roleManager = serviceScope.ServiceProvider.GetRequiredService<RoleManager<IdentityRole>>();
+
+                if (!await roleManager.RoleExistsAsync(UserRoles.Admin))
+                    await roleManager.CreateAsync(new IdentityRole(UserRoles.Admin));
+
+                if (!await roleManager.RoleExistsAsync(UserRoles.User))
+                    await roleManager.CreateAsync(new IdentityRole(UserRoles.User));
+
+                // Users
+
+                var userManager = serviceScope.ServiceProvider.GetRequiredService<UserManager<ApplicationUser>>(); ;
+                var adminUser = await userManager.FindByEmailAsync("admin@tickets.com");
+
+                if (adminUser == null)
+                {
+                    var newAdminuser = new ApplicationUser()
+                    {
+                        FullName = "admin",
+                        UserName = "admin",
+                        Email = "admin@tickets.com",
+                        EmailConfirmed = true
+                    };
+
+                    await userManager.CreateAsync(newAdminuser, "admin");
+                    await userManager.AddToRoleAsync(newAdminuser, UserRoles.Admin);
+                }
+
+                
+                var simpleUser = await userManager.FindByEmailAsync("admin@tickets.com");
+
+                if (simpleUser == null)
+                {
+                    var newSimpleUser = new ApplicationUser()
+                    {
+                        FullName = "Simple user",
+                        UserName = "user",
+                        Email = "user@tickets.com",
+                        EmailConfirmed = true
+                    };
+
+                    await userManager.CreateAsync(newSimpleUser, "user");
+                    await userManager.AddToRoleAsync(newSimpleUser, UserRoles.User);
+                }
+
             }
         }
     }
